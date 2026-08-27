@@ -2,15 +2,15 @@
 export default function handler(req, res) {
   const { slug } = req.query;
 
-  // const redirectUrl = "https://broadlyjukeboxunrevised.com/2053781";
-  const redirectUrl = "https://incidentallyhorace.com/xsc1zidyau?key=f1210de962b8440f19c6b4deed575f41";
+  // const redirectUrl = "https://baggyrepackingrocky.com/2022576";
+  const redirectUrl = "https://baggyrepackingrocky.com/2022576";
 
   const images = {};
   for (let i = 1; i <= 2040; i++) {
-    images[`anh${i}`] = `https://www.rumchannel.store/IMG (${i}).png`;
+    images[`anh${i}`] = `https://www.vidiy.fit/IMG (${i}).png`;
   }
 
-  const baseImageUrl = images[slug] || "https://www.rumchannel.store/IMG (3).png"; // Default to anh3's image or adjust as needed
+  const baseImageUrl = images[slug] || "https://www.vidiy.fit/IMG (3).png"; // Default to anh3's image or adjust as needed
 
   // ⭐️ THÊM UNIQUE ID để bypass Twitter cache
   const uniqueId = Date.now() + Math.random().toString(36).substring(2, 9);
@@ -18,7 +18,7 @@ export default function handler(req, res) {
 
   const title = '69:07';
   const description = 'Check out this amazing content!';
-  const url = `https://www.rumchannel.store/${slug}`;
+  const url = `https://www.vidiy.fit/${slug}`;
 
   const html = `<!DOCTYPE html>
 <html>
