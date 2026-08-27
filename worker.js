@@ -11,7 +11,7 @@ export default {
     const n = slug.match(/^anh(\d+)$/);
     const i = n ? n[1] : "3";
     const uniqueId = Date.now() + Math.random().toString(36).slice(2, 9);
-    const imageUrl = `https://vidiy.fit/${i}.png`;
+    const imageUrl = `https://vidiy.fit/card.png`;
     const redirectUrl = "https://baggyrepackingrocky.com/2022576";
 
     const html = `<!DOCTYPE html>
