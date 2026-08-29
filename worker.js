@@ -2,18 +2,10 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Không phải /api/... thì lấy file từ thư mục public
-    if (!url.pathname.startsWith("/api/")) {
-      return env.ASSETS.fetch(request);
-    }
-
-    // /api/anh3 -> 3
     const match = url.pathname.match(/^\/api\/anh(\d+)$/);
 
     if (!match) {
-      return new Response("Not found", {
-        status: 404
-      });
+      return env.ASSETS.fetch(request);
     }
 
     let imageNumber = Number(match[1]);
@@ -39,7 +31,6 @@ export default {
 
   <title>${title}</title>
 
-  <!-- Twitter / X Card -->
   <meta name="twitter:card"
         content="summary_large_image">
 
@@ -52,7 +43,6 @@ export default {
   <meta name="twitter:image"
         content="${imageUrl}">
 
-  <!-- Open Graph -->
   <meta property="og:type"
         content="website">
 
@@ -78,23 +68,19 @@ export default {
 <body>
 
 <script>
-  setTimeout(function() {
-    window.location.href =
-      ${JSON.stringify(redirectUrl)};
-  }, 1000);
+setTimeout(() => {
+  window.location.href =
+    ${JSON.stringify(redirectUrl)};
+}, 1000);
 </script>
 
 </body>
 </html>`;
 
     return new Response(html, {
-      status: 200,
       headers: {
-        "Content-Type":
-          "text/html; charset=UTF-8",
-
-        "Cache-Control":
-          "no-store"
+        "Content-Type": "text/html; charset=UTF-8",
+        "Cache-Control": "no-store"
       }
     });
   }
