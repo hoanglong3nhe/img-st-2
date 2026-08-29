@@ -1,4 +1,12 @@
 {
-  "name": "img-st-2",
-  "private": true
+  "name": "image-redirect-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
 }
