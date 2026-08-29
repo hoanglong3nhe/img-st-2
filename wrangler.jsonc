@@ -2,11 +2,10 @@
   "name": "image-redirect",
   "main": "src/worker.js",
   "compatibility_date": "2026-08-29",
+
   "assets": {
     "directory": "./public/",
     "binding": "ASSETS",
-    "run_worker_first": [
-      "/api/*"
-    ]
+    "run_worker_first": true
   }
 }
