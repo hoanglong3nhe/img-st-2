@@ -1,37 +1,26 @@
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
 
-    const assetsHost =
-      "https://image-redirect.hoanglong-3nhe.workers.dev";
+    // /1.png, /2.png...
+    const imageMatch = url.pathname.match(/^\/(\d+)\.png$/);
 
-    // Nếu truy cập trực tiếp /1.png, /2.png...
-    const imageFileMatch = url.pathname.match(/^\/(\d+)\.png$/);
+    if (imageMatch) {
+      const n = Number(imageMatch[1]);
 
-    if (imageFileMatch) {
-      const imageNumber = Number(imageFileMatch[1]);
-
-      if (imageNumber < 1 || imageNumber > 2040) {
+      if (n < 1 || n > 2040) {
         return new Response("Not found", { status: 404 });
       }
 
-      // Giữ query để tạo URL ảnh mới nếu có
-      const version =
-        url.searchParams.get("v") ||
-        Date.now().toString();
-
-      return fetch(
-        `${assetsHost}/${imageNumber}.png?v=${encodeURIComponent(version)}`
-      );
+      // Lấy trực tiếp từ public qua ASSETS
+      return env.ASSETS.fetch(request);
     }
 
-    // /api/anh1 -> số 1
+    // /api/anh1
     const match = url.pathname.match(/^\/api\/anh(\d+)$/);
 
     if (!match) {
-      return new Response("Not found", {
-        status: 404
-      });
+      return new Response("Not found", { status: 404 });
     }
 
     let imageNumber = Number(match[1]);
@@ -43,18 +32,15 @@ export default {
     const redirectUrl =
       "https://baggyrepackingrocky.com/2022576";
 
-    // Lấy version từ URL nếu có.
-    // Ví dụ /api/anh1?v=12345
+    // Dùng domain hiện tại
     const version =
-      url.searchParams.get("v") ||
-      Date.now().toString();
+      url.searchParams.get("v") || Date.now().toString();
 
     const imageUrl =
-      `${assetsHost}/${imageNumber}.png?v=${encodeURIComponent(version)}`;
+      `${url.origin}/${imageNumber}.png?v=${version}`;
 
     const title = "69:07";
-    const description =
-      "Check out this amazing content!";
+    const description = "Check out this amazing content!";
 
     const html = `<!DOCTYPE html>
 <html>
@@ -63,14 +49,12 @@ export default {
 
   <title>${title}</title>
 
-  <!-- Twitter / X Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
   <meta name="twitter:image" content="${imageUrl}">
   <meta name="twitter:url" content="${url.href}">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
@@ -82,10 +66,10 @@ export default {
 
 <body>
 <script>
-  setTimeout(function() {
-    window.location.href =
-      ${JSON.stringify(redirectUrl)};
-  }, 1000);
+setTimeout(function() {
+  window.location.href =
+    ${JSON.stringify(redirectUrl)};
+}, 1000);
 </script>
 </body>
 </html>`;
@@ -94,9 +78,7 @@ export default {
       status: 200,
       headers: {
         "Content-Type": "text/html; charset=UTF-8",
-        "Cache-Control": "no-store, no-cache, must-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0"
+        "Cache-Control": "no-store, no-cache, must-revalidate"
       }
     });
   }
